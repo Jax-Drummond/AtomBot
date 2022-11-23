@@ -1,2 +1,2 @@
 #config
-TOKEN = ''
+TOKEN = 'YOURBOTTOKENHERE'
