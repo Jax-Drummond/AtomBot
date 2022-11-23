@@ -23,7 +23,7 @@ async def on_ready():
 
 
 @bot.slash_command(description="Test Command that responds with 'World'")
-async def aloha(inter):
+async def hello(inter):
     await inter.response.send_message("World")
 
 
