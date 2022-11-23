@@ -10,11 +10,16 @@ intents.messages = True
 intents.message_content = True
 intents.reactions = True
 
-bot = commands.Bot(
-    command_prefix='..',
+bot = commands.InteractionBot(
     command_sync_flags=command_sync_flags,
     intents=intents,
 )
+
+
+@bot.event
+async def on_ready():
+    print("running")
+    print(f'Logged in as {bot.user}')
 
 
 @bot.slash_command(description="Test Command that responds with 'World'")
