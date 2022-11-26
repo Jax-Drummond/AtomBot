@@ -1,6 +1,11 @@
+import datetime
+
+import disnake
 import disnake as discord
+
 from config import *
 from disnake.ext import commands
+from printscreen import *
 
 command_sync_flags = commands.CommandSyncFlags.default()
 command_sync_flags.sync_commands_debug = True
@@ -25,6 +30,20 @@ async def on_ready():
 @bot.slash_command(description="Test Command that responds with 'World'")
 async def hello(inter):
     await inter.response.send_message("World")
+
+
+@bot.slash_command(description="Scrapes a random image from Prnt.sc")
+async def prntsc(inter):
+    embed = disnake.Embed(
+        title="Print-screen Image",
+        color=disnake.Color.blue(),
+        timestamp=datetime.datetime.now(),
+    )
+    image = get_image()
+    embed.set_image(file=disnake.File(image))
+    print(embed.image)
+    await inter.response.send_message(embed=embed)
+    delete_photos()
 
 
 bot.run(TOKEN)
