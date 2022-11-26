@@ -15,9 +15,16 @@ intents.messages = True
 intents.message_content = True
 intents.reactions = True
 
+activity = disnake.Activity(
+    name="in Horbits Mouth",
+    type=disnake.CustomActivity("Farting"),
+)
+
 bot = commands.InteractionBot(
     command_sync_flags=command_sync_flags,
     intents=intents,
+    activity=activity,
+
 )
 
 
