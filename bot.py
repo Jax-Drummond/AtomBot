@@ -14,18 +14,9 @@ intents.messages = True
 intents.message_content = True
 intents.reactions = True
 
-emoji = "<:thisisfine:1037528305202634792>"
-
-custom_activity = discord.CustomActivity(
-    name="Poop",
-    type=discord.ActivityType.custom,
-    emoji=emoji,
-)
-
 bot = commands.InteractionBot(
     command_sync_flags=command_sync_flags,
     intents=intents,
-    activity=custom_activity,
 
 )
 
@@ -63,28 +54,29 @@ async def on_button_click(inter: discord.MessageInteraction):
     user = inter.user
     if inter.component.custom_id == "Again":
         await prntsc(inter)
-
     if inter.component.label == "Get/Remove Role":
         role = guild.get_role(int(inter.component.custom_id))
+        await inter.response.defer()
         try:
             if user.get_role(int(inter.component.custom_id)) is None:
                 await user.add_roles(role)
-                await inter.send(f"{role} was Added", ephemeral=True, delete_after=5)
+                await inter.send(f"{role.mention} was Added", ephemeral=True, delete_after=5)
             else:
                 await user.remove_roles(role)
-                await inter.send(f"{role} was Removed", ephemeral=True, delete_after=5)
+                await inter.send(f"{role.mention} was Removed", ephemeral=True, delete_after=5)
         except discord.HTTPException:
             await inter.send("There was an error. Please try again in a few minutes.", ephemeral=True, delete_after=15)
 
 
 @bot.slash_command(description="Create a button role with Message")
 @commands.default_member_permissions(administrator=True)
-async def button_roles(inter, role: discord.Role, message: str = commands.Param(max_length=200)):
+async def button_roles(inter, role: discord.Role, description: commands.String[0, 200]):
     embed = discord.Embed(
         title="Get Role",
-        colour=discord.Color.blue(),
-        description=f"Click on the button below to get the {role} role.\n{message}",
+        colour=role.color,
+        description=f"Click on the button below to get the ***{role.mention}*** role.",
     )
+    embed.add_field(name="Description", value=description, inline=False)
     await inter.response.send_message(embed=embed, components=[
         discord.ui.Button(label="Get/Remove Role", style=discord.ButtonStyle.blurple, custom_id=f"{role.id}")
     ])
