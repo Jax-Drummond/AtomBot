@@ -1,4 +1,3 @@
-import asyncio
 import os
 import random
 import re
@@ -36,11 +35,7 @@ def get_image():
     soup = beauty(scrape.text, "html.parser")
 
     if soup.text.__contains__('404 Not Found') or img_url.__contains__('imgur'):
-        print(f'{img_url} Is not working.')
-        print("Trying again.")
         return get_image()
-    print("Got Image")
-    print(img_url)
     filename = img_url.split('/')[-1]
     path = f"images/{filename}"
     with open(path, 'wb') as f:
