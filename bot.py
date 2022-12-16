@@ -99,16 +99,23 @@ async def on_button_click(inter: discord.MessageInteraction):
 @bot.slash_command(description="Create a button role with Message")
 # Sets the slash command perms to administrator only
 @commands.default_member_permissions(administrator=True)
-async def button_roles(inter, role: discord.Role, description: commands.String[0, 200]):
+async def button_roles(inter, role: discord.Role, description: commands.String[0, 200],
+                       channel: discord.TextChannel = None):
     embed = discord.Embed(
         title="Get Role",
         colour=role.color,
         description=f"Click on the button below to get the ***{role.mention}*** role.",
     )
     embed.add_field(name="Description", value=description, inline=False)
-    await inter.response.send_message(embed=embed, components=[
-        discord.ui.Button(label="Get/Remove Role", style=discord.ButtonStyle.blurple, custom_id=f"{role.id}")
-    ])
+    if channel is None:
+        await inter.response.send_message(embed=embed, components=[
+            discord.ui.Button(label="Get/Remove Role", style=discord.ButtonStyle.blurple, custom_id=f"{role.id}")
+        ])
+    else:
+        await channel.send(embed=embed, components=[
+            discord.ui.Button(label="Get/Remove Role", style=discord.ButtonStyle.blurple, custom_id=f"{role.id}")
+        ])
+        await inter.send("Button role successfully created", ephemeral=True, delete_after=2)
 
 
 # Initializes bot logging for debugging
