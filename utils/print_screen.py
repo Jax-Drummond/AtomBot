@@ -44,6 +44,6 @@ def get_image():
 
 
 def delete_photos():
-    files = os.listdir("images")
+    files = os.listdir("./images")
     for f in files:
         os.remove(f"images/{f}")
