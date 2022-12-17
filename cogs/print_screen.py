@@ -1,6 +1,8 @@
+import asyncio
 import datetime
 
 import disnake as discord
+import disnake.errors
 from disnake.ext import commands
 
 from utils.print_screen import *
@@ -20,18 +22,22 @@ class Print_Screen(commands.Cog):
     # Gets a random image from https://prnt.sc
     @commands.slash_command(description="Scrapes a random image from Prnt.sc")
     async def prntsc(self, inter: discord.ApplicationCommandInteraction):
-        # Builds the Embed
-        embed = discord.Embed(title="Print-screen Image", color=discord.Color.blue(), timestamp=datetime.datetime.now())
-        # Gets image from prnt.sc
-        image = get_image()
-        # Set the image of the embed to the one we got from prnt.sc
-        embed.set_image(file=discord.File(image))
-        await inter.response.defer()
+        try:
+            await inter.response.defer()
+            # Builds the Embed
+            embed = discord.Embed(title="Print-screen Image", color=discord.Color.blue(),
+                                  timestamp=datetime.datetime.now())
+            # Gets image from prnt.sc
+            image = get_image()
+            # Set the image of the embed to the one we got from prnt.sc
+            embed.set_image(file=discord.File(image))
 
-        # Sends a message embed that has a button
-        await inter.followup.send(embed=embed, components=[
-            discord.ui.Button(label="Again", style=discord.ButtonStyle.blurple, custom_id="Again")
-        ])
+            # Sends a message embed that has a button
+            await inter.followup.send(embed=embed, components=[
+                discord.ui.Button(label="Again", style=discord.ButtonStyle.blurple, custom_id="Again")
+            ])
+        except disnake.errors.NotFound:
+            return await self.prntsc(inter)
 
 
 def setup(bot):
