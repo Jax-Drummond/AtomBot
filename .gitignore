@@ -3,4 +3,4 @@
 nvenv
 images/*.png
 images/*.jpg
-/bot.log
+/logs/bot.log

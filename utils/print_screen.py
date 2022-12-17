@@ -46,4 +46,6 @@ def get_image():
 def delete_photos():
     files = os.listdir("./images")
     for f in files:
+        if f == ".gitkeep":
+            continue
         os.remove(f"images/{f}")
