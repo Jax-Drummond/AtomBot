@@ -1,11 +1,10 @@
 import disnake as discord
-
-from utils.bot_logging import initialize_logging
-from config import *
 from disnake.ext import commands
+
+from config import *
+from utils.bot_logging import initialize_logging
 from utils.bot_utils import load_cogs
 
-token = None
 if ENVIRONMENT == "PROD":
     token = TOKEN
 else:
@@ -33,6 +32,5 @@ initialize_logging()
 # Loads Cogs
 load_cogs(bot)
 
-# bot.add_cog(ButtonRoles(bot))
 # Runs the bot
 bot.run(token)

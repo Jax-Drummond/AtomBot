@@ -3,8 +3,8 @@ import random
 import re
 import string
 
-from bs4 import BeautifulSoup as beauty
 import cloudscraper
+from bs4 import BeautifulSoup as beauty
 
 
 def random_letters(x):

@@ -1,7 +1,4 @@
-import datetime
-
 from disnake.ext import commands
-import disnake as discord
 
 from utils.print_screen import *
 
