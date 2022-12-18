@@ -23,7 +23,7 @@ class Print_Screen(commands.Cog):
     @commands.slash_command(description="Scrapes a random image from Prnt.sc")
     async def prntsc(self, inter: discord.ApplicationCommandInteraction):
         try:
-            await inter.response.defer(with_message=True)
+            await inter.response.defer(with_message=True, ephemeral=True)
             # Builds the Embed
             embed = discord.Embed(title="Print-screen Image", color=discord.Color.blue(),
                                   timestamp=datetime.datetime.now())
