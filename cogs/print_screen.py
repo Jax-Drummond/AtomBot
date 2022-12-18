@@ -23,7 +23,7 @@ class Print_Screen(commands.Cog):
     @commands.slash_command(description="Scrapes a random image from Prnt.sc")
     async def prntsc(self, inter: discord.ApplicationCommandInteraction):
         try:
-            await inter.response.defer()
+            await inter.response.defer(with_message=True)
             # Builds the Embed
             embed = discord.Embed(title="Print-screen Image", color=discord.Color.blue(),
                                   timestamp=datetime.datetime.now())
@@ -37,7 +37,7 @@ class Print_Screen(commands.Cog):
                 discord.ui.Button(label="Again", style=discord.ButtonStyle.blurple, custom_id="Again")
             ])
         except disnake.errors.NotFound:
-            return await self.prntsc(inter)
+            await self.prntsc(inter)
 
 
 def setup(bot):

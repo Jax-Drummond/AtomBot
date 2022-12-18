@@ -25,23 +25,27 @@ def link_generator():
 
 
 def get_image():
-    website = link_generator()
-    scraper = cloudscraper.create_scraper(delay=1, browser='chrome')
-    scrape = scraper.get(website)
-    soup = beauty(scrape.text, "html.parser")
-    soup = soup.find('img')
-    regx = '(?P<url>https?://[^\s]+)"'
-    img_url = re.search(regx, str(soup)).group("url")
-    scrape = scraper.get(img_url)
-    soup = beauty(scrape.text, "html.parser")
-
-    if soup.text.__contains__('404 Not Found') or img_url.__contains__('imgur'):
+    try:
+        website = link_generator()
+        scraper = cloudscraper.create_scraper(delay=1, browser='chrome')
+        scrape = scraper.get(website)
+        soup = beauty(scrape.text, "html.parser")
+        soup = soup.find('img')
+        regx = '(?P<url>https?://[^\s]+)"'
+        img_url = re.search(regx, str(soup)).group("url")
+        scrape = scraper.get(img_url)
+        soup = beauty(scrape.text, "html.parser")
+        if soup.text.__contains__('404 Not Found') or img_url.__contains__('imgur'):
+            return get_image()
+        filename = img_url.split('/')[-1]
+        path = f"images/{filename}"
+        with open(path, 'wb') as f:
+            f.write(scrape.content)
+        return path
+    except AssertionError:
         return get_image()
-    filename = img_url.split('/')[-1]
-    path = f"images/{filename}"
-    with open(path, 'wb') as f:
-        f.write(scrape.content)
-    return path
+    except AttributeError:
+        return get_image()
 
 
 def delete_photos():
