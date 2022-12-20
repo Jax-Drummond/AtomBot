@@ -12,3 +12,8 @@ A python discord bot
 6. Run `pip install -r requirements.txt`
 7. Run bot.py
 8. Profit
+
+## Optional Config
+
++ `CLIENT_KEY_PTERO`, `APP_KEY_PTERO` and `BASE_URL` are for if you want to use commands pertaining to pterodactyl
++ `CF_CLIENT_ID` and `CF_CLIENT_SECRET` are also for Ptero if you have the panel behind Cloudflare
