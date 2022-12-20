@@ -35,11 +35,11 @@ class Misc_Slash_Commands(commands.Cog):
         await inter.response.defer()
 
         if signal == "start" or signal == "restart":
-            await inter.followup.send(f"The {server} server is now Starting")
+            await inter.followup.send(f"The {server} server is now STARTING")
             while await get_server_status(servers[server]) != "ONLINE":
                 await asyncio.sleep(1)
         if signal == "stop" or signal == "kill":
-            await inter.followup.send(f"The {server} server is now Stopping")
+            await inter.followup.send(f"The {server} server is now STOPPING")
             while await get_server_status(servers[server]) != "OFFLINE":
                 await asyncio.sleep(1)
         await inter.edit_original_response(
