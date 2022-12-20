@@ -33,7 +33,7 @@ class Misc_Slash_Commands(commands.Cog):
         servers = get_servers()
         await change_power_state(servers[server], signal)
         await inter.response.defer()
-        await asyncio.sleep(3)
+        await asyncio.sleep(5)
         await inter.followup.send(
             f"The current status of {server} is {await get_server_status(servers[server])}")
 
