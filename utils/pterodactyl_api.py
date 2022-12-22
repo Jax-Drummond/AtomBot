@@ -28,10 +28,17 @@ async def get_server_status(server):
     response = requests.request('GET', f'{BASE_URL}api/client/servers/{server}/resources', headers=headers_client)
     data = response.json()
     state = data['attributes']['current_state']
-    if state == "running":
-        return "ONLINE"
-    else:
-        return state.upper()
+    return server_states[state]
+
+
+async def servers_embed():
+    the_embed = discord.Embed(title="Server Status", colour=discord.Color.blurple())
+    for server in servers:
+        the_embed.add_field(inline=True, name=server, value=f"Status: {await get_server_status(servers[server])}")
+    if len(servers) % 3 == 1:
+        print(len(servers))
+        the_embed.add_field(inline=True, name="᲼", value="᲼")
+    return the_embed
 
 
 def get_servers():

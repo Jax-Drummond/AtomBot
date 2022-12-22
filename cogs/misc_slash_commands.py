@@ -1,10 +1,10 @@
-import asyncio
+import datetime
 
 import disnake as discord
 from disnake.ext import commands
 
 from utils.bot_utils import load_cogs
-from utils.pterodactyl_api import *
+from utils.print_screen import get_image
 
 
 class Misc_Slash_Commands(commands.Cog):
@@ -19,31 +19,32 @@ class Misc_Slash_Commands(commands.Cog):
         load_cogs(self.bot, True)
         await inter.response.send_message("Reloaded cogs.", ephemeral=True, delete_after=5)
 
-    @commands.slash_command(description="Get the status of a server", name="server-status", auto_sync=True)
-    async def get_server_status(self, inter, server: str = commands.Param(choices=get_servers().keys())):
-        servers = get_servers()
-        await inter.response.send_message(
-            f"The current status of {server} is {await get_server_status(servers[server])}")
+    @commands.Cog.listener()
+    async def on_button_click(self, inter: discord.MessageInteraction):
+        # This is for the Again button on /prnt.sc
+        if inter.component.custom_id == "Again":
+            await self.prntsc(inter)
 
-    @commands.slash_command(description="Sends server power command", name="signal-server", auto_sync=True)
-    @commands.default_member_permissions(administrator=True)
-    async def control_server_power(self, inter,
-                                   signal: str = commands.Param(choices=["start", "stop", "restart", "kill"]),
-                                   server: str = commands.Param(choices=get_servers().keys())):
-        servers = get_servers()
-        await change_power_state(servers[server], signal)
-        await inter.response.defer()
+    # Creates the /prntsc Command
+    # Gets a random image from https://prnt.sc
+    @commands.slash_command(description="Scrapes a random image from Prnt.sc")
+    async def prntsc(self, inter: discord.ApplicationCommandInteraction):
+        try:
+            await inter.response.defer(with_message=True)
+            # Builds the Embed
+            embed = discord.Embed(title="Print-screen Image", color=discord.Color.blue(),
+                                  timestamp=datetime.datetime.now())
+            # Gets image from prnt.sc
+            image = await get_image()
+            # Set the image of the embed to the one we got from prnt.sc
+            embed.set_image(file=discord.File(image))
 
-        if signal == "start" or signal == "restart":
-            await inter.followup.send(f"The {server} server is now STARTING")
-            while await get_server_status(servers[server]) != "ONLINE":
-                await asyncio.sleep(1)
-        if signal == "stop" or signal == "kill":
-            await inter.followup.send(f"The {server} server is now STOPPING")
-            while await get_server_status(servers[server]) != "OFFLINE":
-                await asyncio.sleep(1)
-        await inter.edit_original_response(
-            f"The {server} server is now {await get_server_status(servers[server])}")
+            # Sends a message embed that has a button
+            await inter.followup.send(embed=embed, components=[
+                discord.ui.Button(label="Again", style=discord.ButtonStyle.blurple, custom_id="Again")
+            ])
+        except discord.errors.NotFound:
+            await self.prntsc(inter)
 
 
 def setup(bot):
