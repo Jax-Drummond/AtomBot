@@ -11,8 +11,8 @@ class Event_Handler(commands.Cog):
     # Tells us that the bot is running
     @commands.Cog.listener()
     async def on_ready(self):
+        await delete_photos()
         print(f'Logged in as {self.bot.user}')
-        delete_photos()
 
 
 def setup(bot):

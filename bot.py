@@ -4,6 +4,7 @@ from disnake.ext import commands
 from config import *
 from utils.bot_logging import initialize_logging
 from utils.bot_utils import load_cogs
+from utils.pterodactyl_api import get_servers
 
 if ENVIRONMENT == "PROD":
     token = TOKEN
@@ -19,15 +20,20 @@ intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
 
+activity = discord.Activity(name="Gundam", type=discord.ActivityType.watching)
 # Creates the Bot
 bot = commands.InteractionBot(
     command_sync_flags=command_sync_flags,
     intents=intents,
+    activity=activity,
 
 )
 
 # Initializes bot logging for debugging
 initialize_logging()
+
+# Gets PteroSERVERS
+get_servers()
 
 # Loads Cogs
 load_cogs(bot)

@@ -1,3 +1,4 @@
+import disnake as discord
 import requests
 
 from config import *
@@ -19,6 +20,8 @@ headers_application = {
 }
 
 servers = {}
+black_listed_servers = ["27ce74ca", "07571d6c", "6f970cf0", "f43119da", "2c5f4b02"]
+server_states = {"running": "✅", "offline": "❌", "starting": "⏳", "stopping": "⏳"}
 
 
 async def get_server_status(server):
@@ -34,15 +37,15 @@ async def get_server_status(server):
 def get_servers():
     response = requests.request('GET', f'{BASE_URL}api/application/servers', headers=headers_application)
     data = response.json()
+    servers.clear()
     for f in data['data']:
         server_name = f['attributes']['name']
         server_uuid = f['attributes']['identifier']
-        servers.update({server_name: server_uuid})
-    return servers
+        if not black_listed_servers.__contains__(server_uuid):
+            servers.update({server_name: server_uuid})
 
 
 async def change_power_state(server, state):
     payload = '{"signal": "%s"}' % state
     response = requests.request('POST', f'{BASE_URL}api/client/servers/{server}/power', data=payload,
                                 headers=headers_client)
-    print(response.text)

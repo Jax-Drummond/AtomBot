@@ -2,7 +2,7 @@ import disnake as discord
 from disnake.ext import commands
 
 
-class Button_Roles(commands.Cog):
+class General_Discord_Slash_Commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -46,4 +46,4 @@ class Button_Roles(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Button_Roles(bot))
+    bot.add_cog(General_Discord_Slash_Commands(bot))
