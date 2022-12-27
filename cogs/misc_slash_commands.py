@@ -4,6 +4,7 @@ import disnake as discord
 from disnake.ext import commands
 
 from utils.bot_utils import load_cogs
+from utils.chicopee_work_sched import work_embed
 from utils.print_screen import get_image
 
 
@@ -45,6 +46,14 @@ class Misc_Slash_Commands(commands.Cog):
             ])
         except discord.errors.NotFound:
             await self.prntsc(inter)
+
+    # Creates the /work_sched Command
+    # Displays the work schedule(For Chicopee employees only)
+    @commands.slash_command(description="Displays your work schedule (For Chicopee employees only)")
+    async def work_sched(self, inter: discord.ApplicationCommandInteraction, url: str, name: str):
+        embed = work_embed(url, name)
+        await inter.response.send_message("Schedule sent", ephemeral=True, delete_after=3)
+        await inter.user.send(embed=embed)
 
 
 def setup(bot):
