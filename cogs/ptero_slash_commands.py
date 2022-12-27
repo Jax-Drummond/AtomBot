@@ -19,8 +19,6 @@ class Ptero_Slash_Commands(commands.Cog):
             try:
                 await check(inter)
             except discord.ext.commands.errors.MissingPermissions:
-                await inter.response.send_message("You do not have the required permissions.", ephemeral=True,
-                                                  delete_after=3)
                 return
             self.selected_server = inter.values
             await inter.send("Server selected", ephemeral=True, delete_after=2)
