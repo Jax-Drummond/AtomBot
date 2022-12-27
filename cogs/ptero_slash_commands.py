@@ -14,7 +14,14 @@ class Ptero_Slash_Commands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_dropdown(self, inter: discord.MessageInteraction):
+        check = commands.has_permissions(administrator=True).predicate
         if inter.component.custom_id == "server.select":
+            try:
+                await check(inter)
+            except discord.ext.commands.errors.MissingPermissions:
+                await inter.response.send_message("You do not have the required permissions.", ephemeral=True,
+                                                  delete_after=3)
+                return
             self.selected_server = inter.values
             await inter.send("Server selected", ephemeral=True, delete_after=2)
 
@@ -22,7 +29,15 @@ class Ptero_Slash_Commands(commands.Cog):
     async def on_button_click(self, inter: discord.MessageInteraction):
         states = ["start", "stop", "restart", "kill"]
         # This is for the Again button on /prnt.sc
+        check = commands.has_permissions(administrator=True).predicate
+
         if states.__contains__(inter.component.custom_id):
+            try:
+                await check(inter)
+            except discord.ext.commands.errors.MissingPermissions:
+                await inter.response.send_message("You do not have the required permissions.", ephemeral=True,
+                                                  delete_after=3)
+                return
             signal = inter.component.custom_id
             server = self.selected_server[0]
             if self.selected_server[0] != "":
