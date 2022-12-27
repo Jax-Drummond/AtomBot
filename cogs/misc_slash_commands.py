@@ -25,6 +25,12 @@ class Misc_Slash_Commands(commands.Cog):
         # This is for the Again button on /prnt.sc
         if inter.component.custom_id == "Again":
             await self.prntsc(inter)
+        if inter.component.label == "Refresh":
+            name = inter.component.custom_id
+            url = inter.message.embeds[0].url
+            embed = work_embed(url, name)
+            await inter.response.defer()
+            await inter.message.edit(embed=embed)
 
     # Creates the /prntsc Command
     # Gets a random image from https://prnt.sc
@@ -53,7 +59,9 @@ class Misc_Slash_Commands(commands.Cog):
     async def work_sched(self, inter: discord.ApplicationCommandInteraction, url: str, name: str):
         embed = work_embed(url, name)
         await inter.response.send_message("Schedule sent", ephemeral=True, delete_after=3)
-        await inter.user.send(embed=embed)
+        await inter.user.send(embed=embed, components=[
+            discord.ui.Button(label="Refresh", style=discord.ButtonStyle.gray, custom_id=f"{name}")
+        ])
 
 
 def setup(bot):

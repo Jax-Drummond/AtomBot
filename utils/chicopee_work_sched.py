@@ -56,7 +56,7 @@ def work_embed(url: str, name: str):
                         data2.index('saturday'),
                         data2.index('sunday')]
 
-    embed = discord.Embed(title=f"{name.capitalize()}\n{data[1][2]}", color=discord.Color.orange())
+    embed = discord.Embed(title=f"{name.capitalize()}\n{data[1][2]}", color=discord.Color.orange(), url=url)
 
     for days in days_of_the_week:
         try:
