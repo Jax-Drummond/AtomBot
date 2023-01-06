@@ -1,6 +1,6 @@
 from disnake.ext import commands
 
-from utils.print_screen import *
+from utils.print_screen import delete_photos
 
 
 class Event_Handler(commands.Cog):

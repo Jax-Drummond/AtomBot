@@ -53,6 +53,6 @@ def get_servers():
 
 
 async def change_power_state(server, state):
-    payload = '{"signal": "%s"}' % state
+    payload = f'{{"signal": "{state}"}}'
     requests.request('POST', f'{BASE_URL}api/client/servers/{server}/power', data=payload,
                      headers=headers_client)

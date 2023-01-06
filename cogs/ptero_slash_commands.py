@@ -3,7 +3,7 @@ import asyncio
 import disnake as discord
 from disnake.ext import commands
 
-from utils.pterodactyl_api import *
+from utils.pterodactyl_api import change_power_state, get_server_status, servers_embed, server_states, servers
 
 
 class Ptero_Slash_Commands(commands.Cog):
@@ -42,11 +42,11 @@ class Ptero_Slash_Commands(commands.Cog):
                 await change_power_state(server, signal)
                 await inter.response.defer()
                 if signal in ("start", "restart"):
-                    await inter.followup.send(f"Waiting to updated embed", ephemeral=True, delete_after=2)
+                    await inter.followup.send("Waiting to updated embed", ephemeral=True, delete_after=2)
                     while await get_server_status(server) != server_states["running"]:
                         await asyncio.sleep(1)
                 else:
-                    await inter.followup.send(f"Waiting to updated embed", ephemeral=True, delete_after=2)
+                    await inter.followup.send("Waiting to updated embed", ephemeral=True, delete_after=2)
                     while await get_server_status(server) != server_states["offline"]:
                         await asyncio.sleep(1)
                 embed = await servers_embed()
