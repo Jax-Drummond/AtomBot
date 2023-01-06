@@ -63,6 +63,13 @@ class Misc_Slash_Commands(commands.Cog):
             discord.ui.Button(label="Refresh", style=discord.ButtonStyle.gray, custom_id=f"{name}")
         ])
 
+    @commands.slash_command(description="Get a picture of the hill", name="chic-o-peek-cam")
+    async def chic_o_peek_cam(self, inter):
+        await inter.response.defer()
+        embed = discord.Embed(title="Chic-o-Peek Webcam", timestamp=datetime.datetime.now())
+        embed.set_image("http://chicopeetubepark.com/webcam/camera.jpg")
+        await inter.followup.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Misc_Slash_Commands(bot))
