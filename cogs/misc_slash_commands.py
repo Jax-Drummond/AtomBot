@@ -6,6 +6,7 @@ from disnake.ext import commands
 from utils.bot_utils import load_cogs
 from utils.chicopee_work_sched import work_embed
 from utils.print_screen import get_image
+import requests
 
 
 class Misc_Slash_Commands(commands.Cog):
@@ -67,7 +68,15 @@ class Misc_Slash_Commands(commands.Cog):
     async def chic_o_peek_cam(self, inter):
         await inter.response.defer()
         embed = discord.Embed(title="Chic-o-Peek Webcam", timestamp=datetime.datetime.now())
-        embed.set_image("http://chicopeetubepark.com/webcam/camera.jpg")
+        response = requests.get("http://chicopeetubepark.com/webcam/camera.jpg", stream=True)
+
+        if not response.ok:
+            print(response)
+
+        with open('images/camera.jpg', 'wb') as file:
+            file.write(response.content)
+
+        embed.set_image(file=discord.File('images/camera.jpg'))
         await inter.followup.send(embed=embed)
 
 
