@@ -41,7 +41,7 @@ class Ptero_Slash_Commands(commands.Cog):
             if self.selected_server[0] != "":
                 await change_power_state(server, signal)
                 await inter.response.defer()
-                if signal == "start" or signal == "restart":
+                if signal in ("start", "restart"):
                     await inter.followup.send(f"Waiting to updated embed", ephemeral=True, delete_after=2)
                     while await get_server_status(server) != server_states["running"]:
                         await asyncio.sleep(1)
@@ -80,7 +80,7 @@ class Ptero_Slash_Commands(commands.Cog):
         await change_power_state(servers[server], signal)
         await inter.response.defer()
 
-        if signal == "start" or signal == "restart":
+        if signal in ("start", "restart"):
             await inter.followup.send(f"The {server} server is now STARTING")
             while await get_server_status(servers[server]) != server_states["running"]:
                 await asyncio.sleep(1)

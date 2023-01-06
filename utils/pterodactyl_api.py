@@ -33,8 +33,8 @@ async def get_server_status(server):
 
 async def servers_embed():
     the_embed = discord.Embed(title="Server Status", colour=discord.Color.blurple())
-    for server in servers:
-        the_embed.add_field(inline=True, name=server, value=f"Status: {await get_server_status(servers[server])}")
+    for name, server_id in servers.items():
+        the_embed.add_field(inline=True, name=name, value=f"Status: {await get_server_status(server_id)}")
     if len(servers) % 3 == 1:
         print(len(servers))
         the_embed.add_field(inline=True, name="᲼", value="᲼")
@@ -54,5 +54,5 @@ def get_servers():
 
 async def change_power_state(server, state):
     payload = '{"signal": "%s"}' % state
-    response = requests.request('POST', f'{BASE_URL}api/client/servers/{server}/power', data=payload,
-                                headers=headers_client)
+    requests.request('POST', f'{BASE_URL}api/client/servers/{server}/power', data=payload,
+                     headers=headers_client)

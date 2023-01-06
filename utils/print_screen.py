@@ -1,5 +1,5 @@
-import asyncio
 import os
+
 import random
 import re
 import string
@@ -31,7 +31,7 @@ async def get_image():
         scrape = scraper.get(website)
         soup = beauty(scrape.text, "html.parser")
         soup = soup.find('img')
-        regx = '(?P<url>https?://[^\s]+)"'
+        regx = '(?P<url>https?://[^\\s]+)"'
         img_url = re.search(regx, str(soup)).group("url")
         scrape = scraper.get(img_url)
         soup = beauty(scrape.text, "html.parser")
