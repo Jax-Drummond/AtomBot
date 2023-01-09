@@ -79,6 +79,15 @@ class Misc_Slash_Commands(commands.Cog):
         embed.set_image(file=discord.File('images/camera.jpg'))
         await inter.followup.send(embed=embed)
 
+    @commands.message_command(name="Delete")
+    async def delete_dm(self, inter: discord.MessageCommandInteraction, message: discord.Message):
+        if message.author == self.bot.user and message.channel.type is None:
+            await inter.response.send_message("Message deleted", ephemeral=True, delete_after=1)
+            await message.delete()
+        else:
+            await inter.response.send_message("Must be used in a DM Channel and on a message created by the bot.",
+                                              ephemeral=True, delete_after=5)
+
 
 def setup(bot):
     bot.add_cog(Misc_Slash_Commands(bot))
