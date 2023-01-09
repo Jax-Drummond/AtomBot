@@ -87,6 +87,7 @@ class Misc_Slash_Commands(commands.Cog):
         else:
             await inter.response.send_message("Must be used in a DM Channel and on a message created by the bot.",
                                               ephemeral=True, delete_after=5)
+        print(f"{message.author}:{self.bot.user} {message.channel}")
 
 
 def setup(bot):
