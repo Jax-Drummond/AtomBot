@@ -57,23 +57,23 @@ def work_embed(url: str, name: str):
                         data2.index('sunday')]
 
     embed = discord.Embed(title=f"{name.capitalize()}\n{data[1][2]}", color=discord.Color.orange(), url=url)
-
     for days in days_of_the_week:
         try:
+
             num = 1
             if days_of_the_week.index(days) == 6:
                 num = 0
             if data2.index(name, days) > days_of_the_week[days_of_the_week.index(days) + num] and days_of_the_week[
                 days_of_the_week.index(days) + num] != days_of_the_week[days_of_the_week.index(days)]:
-                embed.add_field(name=data2[days].capitalize(), value="No Work", inline=False)
+                embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}", value="No Work", inline=False)
             else:
                 for i in range(0, len(data2)):
                     if data2[data2.index(name, days) - i][0].isnumeric():
-                        embed.add_field(name=data2[days].capitalize(),
+                        embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}",
                                         value=data2[data2.index(name, days) - i],
                                         inline=False)
                         break
         except ValueError:
-            embed.add_field(name=data2[days].capitalize(), value="No Work", inline=False)
+            embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}", value="No Work", inline=False)
 
     return embed
