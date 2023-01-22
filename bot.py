@@ -20,13 +20,13 @@ intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
 
-activity = discord.Activity(name="Gundam", type=discord.ActivityType.watching)
+activity = discord.Activity(name="You", type=discord.ActivityType.playing)
+
 # Creates the Bot
 bot = commands.InteractionBot(
     command_sync_flags=command_sync_flags,
     intents=intents,
     activity=activity,
-
 )
 
 # Initializes bot logging for debugging

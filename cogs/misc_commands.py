@@ -83,8 +83,9 @@ class Misc_Slash_Commands(commands.Cog):
     async def delete_dm(self, inter: discord.MessageCommandInteraction, message: discord.Message):
         author = message.author
         bot = self.bot.user
-        channel_type = message.channel.type
-        if author == bot and channel_type is None:
+        channel_type = inter.channel.type
+
+        if author == bot and channel_type is discord.ChannelType.private:
             await inter.response.send_message("Message deleted", ephemeral=True, delete_after=1)
             await message.delete()
         else:
