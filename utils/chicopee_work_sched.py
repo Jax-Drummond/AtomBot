@@ -77,11 +77,10 @@ def work_embed(url: str, name: str):
                             if data2[time_index + n][0].isnumeric() or data2[time_index + n] == data2[days_of_the_week[
                                 days_of_the_week.index(days) + num]]:
                                 break
-                            else:
-                                if data2[time_index + n].__contains__('^') or data2[time_index + n].__contains__(
-                                        'change') or data2[time_index + n] == name:
-                                    continue
-                                workers.append(data2[time_index + n].capitalize())
+                            if data2[time_index + n].__contains__('^') or data2[time_index + n].__contains__(
+                                    'change') or data2[time_index + n] == name:
+                                continue
+                            workers.append(data2[time_index + n].capitalize())
 
                         embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}\n{time}",
                                         value='\n'.join(workers),
