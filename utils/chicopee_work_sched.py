@@ -65,15 +65,29 @@ def work_embed(url: str, name: str):
                 num = 0
             if data2.index(name, days) > days_of_the_week[days_of_the_week.index(days) + num] and days_of_the_week[
                 days_of_the_week.index(days) + num] != days_of_the_week[days_of_the_week.index(days)]:
-                embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}", value="No Work", inline=False)
+                embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}\nNo Work", value="", inline=False)
             else:
                 for i in range(0, len(data2)):
                     if data2[data2.index(name, days) - i][0].isnumeric():
-                        embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}",
-                                        value=data2[data2.index(name, days) - i],
+                        workers = []
+                        time = data2[data2.index(name, days) - i]
+                        time_index = (data2.index(name, days) - i) + 1
+
+                        for n in range(0, len(data2) - time_index):
+                            if data2[time_index + n][0].isnumeric() or data2[time_index + n] == data2[days_of_the_week[
+                                days_of_the_week.index(days) + num]]:
+                                break
+                            else:
+                                if data2[time_index + n].__contains__('^') or data2[time_index + n].__contains__(
+                                        'change') or data2[time_index + n] == name:
+                                    continue
+                                workers.append(data2[time_index + n].capitalize())
+
+                        embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}\n{time}",
+                                        value='\n'.join(workers),
                                         inline=False)
                         break
         except ValueError:
-            embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}", value="No Work", inline=False)
+            embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}\nNo Work", value="", inline=False)
 
     return embed

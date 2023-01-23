@@ -4,6 +4,7 @@ from disnake.ext import commands
 from config import *
 from utils.bot_logging import initialize_logging
 from utils.bot_utils import load_cogs
+
 from utils.pterodactyl_api import get_servers
 
 if ENVIRONMENT == "PROD":
