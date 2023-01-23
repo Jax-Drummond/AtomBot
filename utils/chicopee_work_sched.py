@@ -36,15 +36,14 @@ def work_embed(url: str, name: str):
 
     counter = 0
     data2 = []
+
     for text in data[4]:
         if text == "Start":
             for i in range(3, len(data)):
-
                 if data[i][counter] != '​' and data[i][counter] != '' and data[i][counter] != 'Start':
                     data2.append(data[i][counter])
                 if data[i][counter + 1] != '​' and data[i][counter + 1] != '' and i != 6:
                     data2.append(data[i][counter + 1])
-
         counter = counter + 1
 
     data2 = list(map(lambda x: x.lower(), data2))
@@ -55,17 +54,24 @@ def work_embed(url: str, name: str):
                         data2.index('friday'),
                         data2.index('saturday'),
                         data2.index('sunday')]
-
     embed = discord.Embed(title=f"{name.capitalize()}\n{data[1][2]}", color=discord.Color.orange(), url=url)
-    for days in days_of_the_week:
-        try:
 
+    for days in days_of_the_week:
+        current_day = data2[days].capitalize()
+        day_shift_time = data2[days + 1]
+
+        try:
             num = 1
             if days_of_the_week.index(days) == 6:
                 num = 0
-            if data2.index(name, days) > days_of_the_week[days_of_the_week.index(days) + num] and days_of_the_week[
-                days_of_the_week.index(days) + num] != days_of_the_week[days_of_the_week.index(days)]:
-                embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}\nNo Work", value="", inline=False)
+
+            is_name_not_today = data2.index(name, days) > days_of_the_week[days_of_the_week.index(days) + num]
+            tomorrow = days_of_the_week[
+                days_of_the_week.index(days) + num]
+            today = days_of_the_week[days_of_the_week.index(days)]
+
+            if is_name_not_today and tomorrow != today:
+                embed.add_field(name=f"{current_day} - {day_shift_time}\nNo Work", value="", inline=False)
             else:
                 for i in range(0, len(data2)):
                     if data2[data2.index(name, days) - i][0].isnumeric():
@@ -74,19 +80,24 @@ def work_embed(url: str, name: str):
                         time_index = (data2.index(name, days) - i) + 1
 
                         for n in range(0, len(data2) - time_index):
-                            if data2[time_index + n][0].isnumeric() or data2[time_index + n] == data2[days_of_the_week[
-                                days_of_the_week.index(days) + num]]:
-                                break
-                            if data2[time_index + n].__contains__('^') or data2[time_index + n].__contains__(
-                                    'change') or data2[time_index + n] == name:
-                                continue
-                            workers.append(data2[time_index + n].capitalize())
+                            current_item = data2[time_index + n]
+                            is_next_day = current_item == data2[days_of_the_week[days_of_the_week.index(days) + num]]
+                            is_work_time = current_item[0].isnumeric()
 
-                        embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}\n{time}",
+                            if is_work_time or is_next_day:
+                                break
+
+                            if current_item.__contains__('^') or current_item.__contains__(
+                                    'change') or current_item == name:
+                                continue
+
+                            workers.append(current_item.capitalize())
+
+                        embed.add_field(name=f"{current_day} - {day_shift_time}\n{time}",
                                         value='\n'.join(workers),
                                         inline=False)
                         break
         except ValueError:
-            embed.add_field(name=f"{data2[days].capitalize()} - {data2[days + 1]}\nNo Work", value="", inline=False)
+            embed.add_field(name=f"{current_day} - {day_shift_time}\nNo Work", value="", inline=False)
 
     return embed
