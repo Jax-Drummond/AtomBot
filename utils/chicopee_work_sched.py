@@ -56,39 +56,39 @@ def work_embed(url: str, name: str):
                         data2.index('sunday')]
     embed = discord.Embed(title=f"{name.capitalize()}\n{data[1][2]}", color=discord.Color.orange(), url=url)
 
-    for days in days_of_the_week:
-        current_day = data2[days].capitalize()
-        day_shift_time = data2[days + 1]
+    for day in days_of_the_week:
+        current_day = data2[day].capitalize()
+        day_shift_time = data2[day + 1]
 
         try:
             num = 1
-            if days_of_the_week.index(days) == 6:
+            if days_of_the_week.index(day) == 6:
                 num = 0
 
-            is_name_not_today = data2.index(name, days) > days_of_the_week[days_of_the_week.index(days) + num]
+            is_name_not_today = data2.index(name, day) > days_of_the_week[days_of_the_week.index(day) + num]
             tomorrow = days_of_the_week[
-                days_of_the_week.index(days) + num]
-            today = days_of_the_week[days_of_the_week.index(days)]
+                days_of_the_week.index(day) + num]
+            today = days_of_the_week[days_of_the_week.index(day)]
 
             if is_name_not_today and tomorrow != today:
                 embed.add_field(name=f"{current_day} - {day_shift_time}\nNo Work", value="", inline=False)
             else:
                 for i in range(0, len(data2)):
-                    if data2[data2.index(name, days) - i][0].isnumeric():
+                    if data2[data2.index(name, day) - i][0].isnumeric():
                         workers = []
-                        time = data2[data2.index(name, days) - i]
-                        time_index = (data2.index(name, days) - i) + 1
+                        time = data2[data2.index(name, day) - i]
+                        time_index = (data2.index(name, day) - i) + 1
 
                         for n in range(0, len(data2) - time_index):
                             current_item = data2[time_index + n]
-                            is_next_day = current_item == data2[days_of_the_week[days_of_the_week.index(days) + num]]
+                            is_next_day = current_item == data2[days_of_the_week[days_of_the_week.index(day) + num]]
                             is_work_time = current_item[0].isnumeric()
 
                             if is_work_time or is_next_day:
                                 break
 
                             if current_item.__contains__('^') or current_item.__contains__(
-                                    'change') or current_item == name:
+                                    'change') or current_item.__contains__('update') or current_item == name:
                                 continue
 
                             workers.append(current_item.capitalize())
