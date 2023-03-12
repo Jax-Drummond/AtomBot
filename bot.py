@@ -20,8 +20,9 @@ command_sync_flags.sync_commands_debug = True
 intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
+intents.members = True
 
-activity = discord.Activity(name="You", type=discord.ActivityType.playing)
+activity = discord.Activity(name="The Consultant", type=discord.ActivityType.watching)
 
 # Creates the Bot
 bot = commands.InteractionBot(

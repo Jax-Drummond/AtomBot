@@ -5,3 +5,4 @@ images/*.png
 images/*.jpg
 images/*.jpeg
 /logs/bot.log
+files/*.txt

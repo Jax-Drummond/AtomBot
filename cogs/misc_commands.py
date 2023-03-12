@@ -1,4 +1,5 @@
 import datetime
+import random
 
 import disnake as discord
 from disnake.ext import commands
@@ -8,10 +9,18 @@ from utils.chicopee_work_sched import work_embed
 from utils.print_screen import get_image
 import requests
 
+from utils.probability import oneIn
+
 
 class Misc_Slash_Commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.slash_command(description="Flip a coin")
+    async def flip_a_coin(self, inter):
+        choice = await oneIn()
+        coin = "Heads" if choice else "Tails"
+        await inter.response.send_message(f"You got {coin}")
 
     # Creates the /reload Command
     # Reloads the bots cogs
