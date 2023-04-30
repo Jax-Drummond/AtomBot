@@ -1,4 +1,5 @@
 import disnake as discord
+import wavelink
 from disnake.ext import commands
 
 from config import *

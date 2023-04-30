@@ -9,7 +9,7 @@ from utils.chicopee_work_sched import work_embed
 from utils.print_screen import get_image
 import requests
 
-from utils.probability import oneIn
+from utils.probability import one_in
 
 
 class Misc_Slash_Commands(commands.Cog):
@@ -18,7 +18,7 @@ class Misc_Slash_Commands(commands.Cog):
 
     @commands.slash_command(description="Flip a coin")
     async def flip_a_coin(self, inter):
-        choice = await oneIn()
+        choice = await one_in()
         coin = "Heads" if choice else "Tails"
         await inter.response.send_message(f"You got {coin}")
 
@@ -73,21 +73,9 @@ class Misc_Slash_Commands(commands.Cog):
             discord.ui.Button(label="Refresh", style=discord.ButtonStyle.gray, custom_id=f"{name}")
         ])
 
-    @commands.slash_command(description="Get a picture of the hill", name="chic-o-peek-cam")
-    async def chic_o_peek_cam(self, inter):
-        await inter.response.defer()
-        embed = discord.Embed(title="Chic-o-Peek Webcam", timestamp=datetime.datetime.now())
-        response = requests.get("http://chicopeetubepark.com/webcam/camera.jpg", stream=True)
-
-        if not response.ok:
-            print(response)
-
-        with open('images/camera.jpg', 'wb') as file:
-            file.write(response.content)
-
-        embed.set_image(file=discord.File('images/camera.jpg'))
-        await inter.followup.send(embed=embed)
-
+    # Creates the /delete Command
+    # Deletes a message in a DM Channel
+    # Only works in a DM Channel and on a message created by the bot
     @commands.message_command(name="Delete")
     async def delete_dm(self, inter: discord.MessageCommandInteraction, message: discord.Message):
         author = message.author
