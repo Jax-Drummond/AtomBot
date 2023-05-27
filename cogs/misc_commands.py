@@ -1,5 +1,4 @@
 import datetime
-import random
 
 import disnake as discord
 from disnake.ext import commands
@@ -9,7 +8,6 @@ from utils.bot_utils import load_cogs
 from utils.chicopee_work_sched import work_embed
 from utils.database_handler import check_for_channel, add_user_channel, remove_channel
 from utils.print_screen import get_image
-import requests
 
 from utils.probability import one_in
 

@@ -1,4 +1,3 @@
-import mariadb
 import config
 import pymysql.cursors
 
