@@ -4,8 +4,10 @@ import random
 import disnake as discord
 from disnake.ext import commands
 
+import config
 from utils.bot_utils import load_cogs
 from utils.chicopee_work_sched import work_embed
+from utils.database_handler import check_for_channel, add_user_channel, remove_channel
 from utils.print_screen import get_image
 import requests
 
@@ -88,6 +90,41 @@ class Misc_Slash_Commands(commands.Cog):
         else:
             await inter.response.send_message("Must be used in a DM Channel and on a message created by the bot.",
                                               ephemeral=True, delete_after=5)
+
+    @commands.Cog.listener()
+    async def on_guild_channel_delete(self, channel):
+        is_private_vc = await check_for_channel(channel_id=channel.id)
+        if is_private_vc:
+            await remove_channel(channel.id)
+
+    @commands.slash_command(description="Creates a private vc for you. Must be a server booster or council member.",
+                            name="create-private-vc")
+    async def create_private_vc(self, inter: discord.MessageCommandInteraction, name: str = None):
+        allowed_roles = [658493803073634304, 602668901452611590, 595460458421420060,
+                         1055268820048162867]
+        category_id = config.VC_CATEGORY
+        command_user = inter.user
+
+        for role in allowed_roles:
+            is_allowed = command_user.get_role(role) is not None
+            if is_allowed:
+                break
+
+        if is_allowed is True:
+            has_channel = await check_for_channel(command_user.id)
+            if not has_channel:
+                name = name if name is not None else f"{command_user.name}'s VC"
+                new_vc = await command_user.guild.get_channel(category_id).create_voice_channel(name)
+                await new_vc.set_permissions(target=command_user, view_channel=True,
+                                             manage_channels=True,
+                                             manage_permissions=True,
+                                             )
+                await add_user_channel(command_user.id, new_vc.id)
+                await inter.response.send_message("Channel created.", ephemeral=True, delete_after=2)
+            else:
+                await inter.response.send_message("You already have a channel silly.", ephemeral=True, delete_after=2)
+        else:
+            await inter.response.send_message("You are not a booster of the server. ;(", ephemeral=True, delete_after=2)
 
 
 def setup(bot):
