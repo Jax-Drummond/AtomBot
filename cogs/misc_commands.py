@@ -100,7 +100,7 @@ class Misc_Slash_Commands(commands.Cog):
     @commands.slash_command(description="Creates a private vc for you. Must be a server booster or council member.",
                             name="create-private-vc")
     async def create_private_vc(self, inter: discord.MessageCommandInteraction, name: str = None):
-        allowed_roles = [658493803073634304, 602668901452611590, 595460458421420060,
+        allowed_roles = [900094202816372746, 658493803073634304, 602668901452611590, 595460458421420060,
                          1055268820048162867]
         category_id = config.VC_CATEGORY
         command_user = inter.user

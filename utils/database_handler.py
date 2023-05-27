@@ -1,28 +1,32 @@
 import mariadb
 import config
+import pymysql.cursors
 
 
 async def connect():
     try:
-        connection = mariadb.connect(
+        connection = pymysql.connect(
             user=config.DB_USERNAME,
             password=config.DB_PASSWORD,
             host=config.DB_IP,
             port=3306,
             database=config.DB_NAME
         )
-        connection.autocommit = True
-        return connection.cursor()
-    except mariadb.Error as error:
+        connection.autocommit(True)
+        cursor = connection.cursor()
+        cursor.execute("CREATE TABLE IF NOT EXISTS private_channels (user_id CHAR(50) PRIMARY KEY,channel_id CHAR(50))")
+
+        return cursor
+    except pymysql.Error as error:
         print(f"Error connecting to database: {error}")
         if "Unknown database" in str(error):
-            connection = mariadb.connect(
+            connection = pymysql.connect(
                 user=config.DB_USERNAME,
                 password=config.DB_PASSWORD,
                 host=config.DB_IP,
                 port=3306
             )
-            connection.autocommit = True
+            connection.autocommit(True)
             cursor = connection.cursor()
             cursor.execute("CREATE DATABASE atombot")
             cursor.execute("USE atombot")
@@ -50,5 +54,8 @@ async def remove_channel(channel_id):
 
 async def add_user_channel(user_id, channel_id):
     cursor = await connect()
-    cursor.execute("INSERT INTO private_channels (user_id,channel_id) VALUES (?, ?)", (str(user_id), str(channel_id)))
+    try:
+        cursor.execute(f"INSERT INTO private_channels (user_id,channel_id) VALUES ({str(user_id)}, {str(channel_id)})")
+    except pymysql.Error as error:
+        print(error)
     cursor.close()
