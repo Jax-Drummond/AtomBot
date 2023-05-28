@@ -15,6 +15,8 @@ from utils.probability import one_in
 class Misc_Slash_Commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.allowed_roles = [900094202816372746, 658493803073634304, 602668901452611590, 595460458421420060,
+                              1055268820048162867]
 
     @commands.slash_command(description="Flip a coin")
     async def flip_a_coin(self, inter):
@@ -91,26 +93,40 @@ class Misc_Slash_Commands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
-        is_private_vc = await check_for_channel(channel_id=channel.id)
+        is_private_vc = await check_for_channel(channel_id=channel.id) is not None
         if is_private_vc:
             await remove_channel(channel.id)
+
+    @commands.Cog.listener()
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
+        has_channel = await check_for_channel(after.id)
+        if has_channel is not None:
+            if not await self.is_allowed_channel(after):
+                await remove_channel(has_channel[0])
+                channel = after.guild.get_channel(int(has_channel[0]))
+                if channel is not None:
+                    await channel.delete()
+                    await after.send("You are no longer a server booster, your private channel was deleted.")
+
+    async def is_allowed_channel(self, user: discord.Member):
+        for role in self.allowed_roles:
+            is_allowed = user.get_role(role) is not None
+            if is_allowed:
+                return True
+        return False
 
     @commands.slash_command(description="Creates a private vc for you. Must be a server booster or council member.",
                             name="create-private-vc")
     async def create_private_vc(self, inter: discord.MessageCommandInteraction, name: str = None):
-        allowed_roles = [900094202816372746, 658493803073634304, 602668901452611590, 595460458421420060,
-                         1055268820048162867]
+
         category_id = config.VC_CATEGORY
         command_user = inter.user
 
-        for role in allowed_roles:
-            is_allowed = command_user.get_role(role) is not None
-            if is_allowed:
-                break
+        is_allowed = await self.is_allowed_channel(command_user)
 
         if is_allowed is True:
             has_channel = await check_for_channel(command_user.id)
-            if not has_channel:
+            if has_channel is None:
                 name = name if name is not None else f"{command_user.name}'s VC"
                 new_vc = await command_user.guild.get_channel(category_id).create_voice_channel(name)
                 await new_vc.set_permissions(target=command_user, view_channel=True,
@@ -120,7 +136,13 @@ class Misc_Slash_Commands(commands.Cog):
                 await add_user_channel(command_user.id, new_vc.id)
                 await inter.response.send_message("Channel created.", ephemeral=True, delete_after=2)
             else:
-                await inter.response.send_message("You already have a channel silly.", ephemeral=True, delete_after=2)
+                channel_exists: bool = command_user.guild.get_channel(int(has_channel[0])) is not None
+                if not channel_exists:
+                    await remove_channel(has_channel[0])
+                    await self.create_private_vc(interaction=inter, name=name)
+                else:
+                    await inter.response.send_message("You already have a channel silly.", ephemeral=True,
+                                                      delete_after=2)
         else:
             await inter.response.send_message("You are not a booster of the server. ;(", ephemeral=True, delete_after=2)
 
