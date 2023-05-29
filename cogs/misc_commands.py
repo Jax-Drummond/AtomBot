@@ -103,8 +103,10 @@ class Misc_Slash_Commands(commands.Cog):
         private_channels = guild.get_channel(config.VC_CATEGORY).channels
 
         for channel in private_channels:
-            channel_owner = guild.get_member(int((await check_for_channel(channel_id=channel.id))[0]))
-            await self.on_member_update(channel_owner, channel_owner)
+            channel_owner_id = await check_for_channel(channel_id=channel.id)
+            if channel_owner_id is not None:
+                channel_owner = guild.get_member(int(channel_owner_id[0]))
+                await self.on_member_update(channel_owner, channel_owner)
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
