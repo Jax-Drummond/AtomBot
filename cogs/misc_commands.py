@@ -13,7 +13,7 @@ from utils.probability import one_in
 
 
 class Misc_Slash_Commands(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.InteractionBot):
         self.bot = bot
         self.allowed_roles = [900094202816372746, 658493803073634304, 602668901452611590, 595460458421420060,
                               1055268820048162867]
@@ -98,12 +98,21 @@ class Misc_Slash_Commands(commands.Cog):
             await remove_channel(channel.id)
 
     @commands.Cog.listener()
+    async def on_ready(self):
+        guild = self.bot.guilds[0]
+        private_channels = guild.get_channel(config.VC_CATEGORY).channels
+
+        for channel in private_channels:
+            channel_owner = guild.get_member(int((await check_for_channel(channel_id=channel.id))[0]))
+            await self.on_member_update(channel_owner, channel_owner)
+
+    @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         has_channel = await check_for_channel(after.id)
         if has_channel is not None:
             if not await self.is_allowed_channel(after):
-                await remove_channel(has_channel[0])
-                channel = after.guild.get_channel(int(has_channel[0]))
+                await remove_channel(has_channel[1])
+                channel = after.guild.get_channel(int(has_channel[1]))
                 if channel is not None:
                     await channel.delete()
                     await after.send("You are no longer a server booster, your private channel was deleted.")
@@ -136,9 +145,9 @@ class Misc_Slash_Commands(commands.Cog):
                 await add_user_channel(command_user.id, new_vc.id)
                 await inter.response.send_message("Channel created.", ephemeral=True, delete_after=2)
             else:
-                channel_exists: bool = command_user.guild.get_channel(int(has_channel[0])) is not None
+                channel_exists: bool = command_user.guild.get_channel(int(has_channel[1])) is not None
                 if not channel_exists:
-                    await remove_channel(has_channel[0])
+                    await remove_channel(has_channel[1])
                     await self.create_private_vc(interaction=inter, name=name)
                 else:
                     await inter.response.send_message("You already have a channel silly.", ephemeral=True,

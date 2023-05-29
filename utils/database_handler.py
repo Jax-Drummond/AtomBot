@@ -37,9 +37,9 @@ async def connect():
 async def check_for_channel(user_id=None, channel_id=None):
     cursor = await connect()
     if user_id is not None:
-        cursor.execute(f"SELECT channel_id FROM private_channels WHERE user_id={user_id}")
+        cursor.execute(f"SELECT user_id,channel_id FROM private_channels WHERE user_id={user_id}")
     elif channel_id is not None:
-        cursor.execute(f"SELECT channel_id FROM private_channels WHERE channel_id={channel_id}")
+        cursor.execute(f"SELECT user_id,channel_id FROM private_channels WHERE channel_id={channel_id}")
     result = cursor.fetchone()
     cursor.close()
     return result
