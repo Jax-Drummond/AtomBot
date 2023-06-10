@@ -46,7 +46,7 @@ async def check_for_channel(user_id=None, channel_id=None):
 
         return cursor.fetchone()
     finally:
-        cursor.close()
+        print("Fuckyou")
 
 
 async def remove_channel(channel_id):
