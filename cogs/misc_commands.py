@@ -138,7 +138,7 @@ class Misc_Slash_Commands(commands.Cog):
         if is_allowed is True:
             has_channel = await check_for_channel(command_user.id)
             if has_channel is None:
-                print(f"User: {command_user.id}")
+                print(f"Returned Result: {has_channel}")
                 name = name if name is not None else f"{command_user.name}'s VC"
                 new_vc = await command_user.guild.get_channel(category_id).create_voice_channel(name)
                 await new_vc.set_permissions(target=command_user, view_channel=True,

@@ -39,12 +39,12 @@ async def check_for_channel(user_id=None, channel_id=None):
     try:
         if user_id is not None:
             cursor.execute(f"SELECT user_id,channel_id FROM private_channels WHERE user_id={user_id}")
-            print(f"Check {user_id}")
+            print(f"Check user: {user_id}")
         elif channel_id is not None:
             cursor.execute(f"SELECT user_id,channel_id FROM private_channels WHERE channel_id={channel_id}")
-            print(f"Check {channel_id}")
-        result = cursor.fetchone()
-        return result
+            print(f"Check channel: {channel_id}")
+
+        return cursor.fetchone()
     finally:
         cursor.close()
 
