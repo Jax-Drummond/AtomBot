@@ -146,11 +146,13 @@ class Misc_Slash_Commands(commands.Cog):
                                              )
                 await add_user_channel(command_user.id, new_vc.id)
                 await inter.response.send_message("Channel created.", ephemeral=True, delete_after=2)
+                print("Created new channel.")
             else:
                 channel_exists: bool = command_user.guild.get_channel(int(has_channel[1])) is not None
                 if not channel_exists:
                     await remove_channel(has_channel[1])
                     await self.create_private_vc(interaction=inter, name=name)
+                    print("Removed non existent channel from database, created new one.")
                 else:
                     await inter.response.send_message("You already have a channel silly.", ephemeral=True,
                                                       delete_after=2)
