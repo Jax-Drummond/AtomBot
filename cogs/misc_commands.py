@@ -138,6 +138,7 @@ class Misc_Slash_Commands(commands.Cog):
         if is_allowed is True:
             has_channel = await check_for_channel(command_user.id)
             if has_channel is None:
+                print(has_channel)
                 name = name if name is not None else f"{command_user.name}'s VC"
                 new_vc = await command_user.guild.get_channel(category_id).create_voice_channel(name)
                 await new_vc.set_permissions(target=command_user, view_channel=True,
@@ -146,7 +147,6 @@ class Misc_Slash_Commands(commands.Cog):
                                              )
                 await add_user_channel(command_user.id, new_vc.id)
                 await inter.response.send_message("Channel created.", ephemeral=True, delete_after=2)
-                print("Created new channel.")
             else:
                 channel_exists: bool = command_user.guild.get_channel(int(has_channel[1])) is not None
                 if not channel_exists:
