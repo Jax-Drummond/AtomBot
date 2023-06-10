@@ -43,10 +43,11 @@ async def check_for_channel(user_id=None, channel_id=None):
         elif channel_id is not None:
             cursor.execute(f"SELECT user_id,channel_id FROM private_channels WHERE channel_id={channel_id}")
             print(f"Check channel: {channel_id}")
-
-        return cursor.fetchone()
+        result = cursor.fetchone()
+        print(f"Expected result: {result}")
+        return result
     finally:
-        print("Fuckyou")
+        cursor.close()
 
 
 async def remove_channel(channel_id):
