@@ -171,10 +171,10 @@ class Misc_Slash_Commands(commands.Cog):
                                          action: str = commands.Param(choices=["add", "remove"]),
                                          user: discord.Member = None,
                                          ):
-        if action is "add" and user is not None and channel is not None:
+        if action == "add" and user is not None and channel is not None:
             await add_user_channel(user.id, channel.id)
             await inter.response.send_message("Record added.", ephemeral=True, delete_after=2)
-        elif action is "remove" and channel is not None:
+        elif action == "remove" and channel is not None:
             await remove_channel(channel.id)
             await inter.response.send_message("Record deleted.", ephemeral=True, delete_after=2)
         else:
