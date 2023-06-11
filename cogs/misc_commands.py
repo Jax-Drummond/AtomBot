@@ -162,6 +162,26 @@ class Misc_Slash_Commands(commands.Cog):
         else:
             await inter.response.send_message("You are not a booster of the server. ;(", ephemeral=True, delete_after=2)
 
+    @commands.slash_command(
+        description="Adds a record.",
+        name="add_private_record")
+    @commands.default_member_permissions(administrator=True)
+    async def add_private_channel_record(self, inter: discord.MessageCommandInteraction,
+                                         channel: discord.VoiceChannel,
+                                         action: str = commands.Param(choices=["add", "remove"]),
+                                         user: discord.Member = None,
+                                         ):
+        if action is "add" and user is not None and channel is not None:
+            await add_user_channel(user.id, channel.id)
+            await inter.response.send_message("Record added.", ephemeral=True, delete_after=2)
+        elif action is "remove" and channel is not None:
+            await remove_channel(channel.id)
+            await inter.response.send_message("Record deleted.", ephemeral=True, delete_after=2)
+        else:
+            await inter.response.send_message(
+                "Must provide channel and user for adding, and just channel for removing.", ephemeral=True,
+                delete_after=2)
+
 
 def setup(bot):
     bot.add_cog(Misc_Slash_Commands(bot))
