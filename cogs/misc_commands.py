@@ -95,6 +95,7 @@ class Misc_Slash_Commands(commands.Cog):
     async def on_guild_channel_delete(self, channel):
         is_private_vc = await check_for_channel(channel_id=channel.id) is not None
         if is_private_vc:
+            print("Channel deleted. Removing record.")
             await remove_channel(channel.id)
 
     @commands.Cog.listener()
@@ -112,7 +113,9 @@ class Misc_Slash_Commands(commands.Cog):
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         has_channel = await check_for_channel(after.id)
         if has_channel is not None:
-            if not await self.is_allowed_channel(after):
+            is_allowed = await self.is_allowed_channel(after)
+            if not is_allowed:
+                print("Member no longer allowed to own channel. Channel deleted and record removed.")
                 await remove_channel(has_channel[1])
                 channel = after.guild.get_channel(int(has_channel[1]))
                 if channel is not None:

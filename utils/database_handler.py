@@ -27,8 +27,8 @@ async def connect():
             )
             connection.autocommit(True)
             cursor = connection.cursor()
-            cursor.execute("CREATE DATABASE atombot")
-            cursor.execute("USE atombot")
+            cursor.execute("CREATE DATABASE config.DB_NAME")
+            cursor.execute(f"USE {config.DB_NAME}")
             cursor.execute("CREATE TABLE private_channels (user_id CHAR(50) PRIMARY KEY,channel_id CHAR(50))")
             print("Database created.")
             return cursor
