@@ -1,5 +1,6 @@
 import datetime
 
+import disnake
 import disnake as discord
 from disnake.ext import commands
 
@@ -107,26 +108,28 @@ class Misc_Slash_Commands(commands.Cog):
             channel_owner_id = await check_for_channel(channel_id=channel.id)
             if channel_owner_id is not None:
                 channel_owner = guild.get_member(int(channel_owner_id[0]))
-                await self.on_member_update(channel_owner, channel_owner)
+                await self.on_raw_member_update(channel_owner)
 
     @commands.Cog.listener()
-    async def on_member_update(self, before: discord.Member, after: discord.Member):
-        has_channel = await check_for_channel(after.id)
-        if has_channel is not None:
-            is_allowed = await self.is_allowed_channel(after)
+    async def on_raw_member_update(self, member: discord.Member):
+        private_channel = await check_for_channel(member.id)
+        if private_channel is not None:
+            is_allowed = await self.is_allowed_channel(member)
+            print(is_allowed)
             if not is_allowed:
                 print("Member no longer allowed to own channel. Channel deleted and record removed.")
-                await remove_channel(has_channel[1])
-                channel = after.guild.get_channel(int(has_channel[1]))
+                await remove_channel(private_channel[1])
+                channel = member.guild.get_channel(int(private_channel[1]))
                 if channel is not None:
                     await channel.delete()
-                    await after.send("You are no longer a server booster. Your private channel has been deleted.")
+                    await member.send("You are no longer a server booster. Your private channel has been deleted.")
 
-    async def is_allowed_channel(self, user: discord.Member):
+    async def is_allowed_channel(self, user: discord.Member) -> bool:
         for role in self.allowed_roles:
             is_allowed = user.get_role(role) is not None
             if is_allowed:
                 return True
+
         return False
 
     @commands.slash_command(description="Creates a private vc for you. Must be a server booster or council member.",
@@ -141,7 +144,6 @@ class Misc_Slash_Commands(commands.Cog):
         if is_allowed is True:
             has_channel = await check_for_channel(command_user.id)
             if has_channel is None:
-                print(f"Returned Result: {has_channel}")
                 name = name if name is not None else f"{command_user.name}'s VC"
                 new_vc = await command_user.guild.get_channel(category_id).create_voice_channel(name)
                 await new_vc.set_permissions(target=command_user, view_channel=True,
