@@ -115,7 +115,7 @@ class Misc_Slash_Commands(commands.Cog):
         private_channel = await check_for_channel(member.id)
         if private_channel is not None:
             is_allowed = await self.is_allowed_channel(member)
-            print(is_allowed)
+            print(member.roles)
             if not is_allowed:
                 print("Member no longer allowed to own channel. Channel deleted and record removed.")
                 await remove_channel(private_channel[1])
@@ -146,7 +146,8 @@ class Misc_Slash_Commands(commands.Cog):
             if has_channel is None:
                 name = name if name is not None else f"{command_user.name}'s VC"
                 new_vc = await command_user.guild.get_channel(category_id).create_voice_channel(name)
-                await new_vc.set_permissions(target=command_user, view_channel=True,
+                await new_vc.set_permissions(target=command_user,
+                                             view_channel=True,
                                              manage_channels=True,
                                              manage_permissions=True,
                                              )
