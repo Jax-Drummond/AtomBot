@@ -115,14 +115,15 @@ class Misc_Slash_Commands(commands.Cog):
         private_channel = await check_for_channel(member.id)
         if private_channel is not None:
             is_allowed = await self.is_allowed_channel(member)
-            print(member.roles)
-            if not is_allowed:
+
+            if not is_allowed and len(member.roles) > 1:
                 print("Member no longer allowed to own channel. Channel deleted and record removed.")
                 await remove_channel(private_channel[1])
                 channel = member.guild.get_channel(int(private_channel[1]))
                 if channel is not None:
                     await channel.delete()
-                    await member.send("You are no longer a server booster. Your private channel has been deleted.")
+                    await member.send("You are no longer a server booster. Your private channel has been deleted.",
+                                      delete_after=300)
 
     async def is_allowed_channel(self, user: discord.Member) -> bool:
         for role in self.allowed_roles:
