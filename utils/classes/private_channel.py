@@ -7,11 +7,11 @@ class Private_Channel:
     private_channels = []
 
     def __init__(self, member: discord.Member, channel: discord.VoiceChannel):
-        print("Private Channel object created.")
         Private_Channel.private_channels.append(self)
         self.private_channels = Private_Channel.private_channels
         self.member = member
         self.channel = channel
+        print(f"Channel Name: {channel.name}, Owner: {member.name}")
 
     # Creates a new record on the database and returns a Private_Channel object
     @classmethod
