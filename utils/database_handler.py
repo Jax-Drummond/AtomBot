@@ -34,23 +34,18 @@ async def connect():
             return cursor
 
 
-async def check_for_channel(user_id=None, channel_id=None):
+async def get_all_records():
     cursor = await connect()
+
     try:
-        if user_id is not None:
-            cursor.execute(f"SELECT user_id,channel_id FROM private_channels WHERE user_id={user_id}")
-            print(f"Check user: {user_id}")
-        elif channel_id is not None:
-            cursor.execute(f"SELECT user_id,channel_id FROM private_channels WHERE channel_id={channel_id}")
-            print(f"Check channel: {channel_id}")
-        result = cursor.fetchone()
-        print(f"Expected result: {result}")
+        cursor.execute("SELECT user_id,channel_id FROM private_channels")
+        result = cursor.fetchall()
         return result
     finally:
         cursor.close()
 
 
-async def remove_channel(channel_id):
+async def remove_channel_record(channel_id):
     cursor = await connect()
     cursor.execute(f"DELETE FROM private_channels WHERE channel_id={channel_id}")
     cursor.close()

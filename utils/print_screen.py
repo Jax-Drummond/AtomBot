@@ -18,9 +18,9 @@ async def random_numbers(x):
 
 async def link_generator():
     website = "https://prnt.sc/"
-    randomletters = await random_letters(2)
-    randomnumbers = await random_numbers(4)
-    website += randomletters + randomnumbers
+    random__letters = await random_letters(2)
+    random__numbers = await random_numbers(4)
+    website += random__letters + random__numbers
     return website
 
 

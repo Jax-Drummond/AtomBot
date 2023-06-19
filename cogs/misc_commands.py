@@ -7,7 +7,8 @@ from disnake.ext import commands
 import config
 from utils.bot_utils import load_cogs
 from utils.chicopee_work_sched import work_embed
-from utils.database_handler import check_for_channel, add_user_channel, remove_channel
+from utils.classes.private_channel import Private_Channel
+from utils.database_handler import remove_channel_record, get_all_records
 from utils.print_screen import get_image
 
 from utils.probability import one_in
@@ -94,43 +95,40 @@ class Misc_Slash_Commands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
-        is_private_vc = await check_for_channel(channel_id=channel.id) is not None
-        if is_private_vc:
-            print("Channel deleted. Removing record.")
-            await remove_channel(channel.id)
+        private_channel: Private_Channel = Private_Channel.find_channel(channel=channel)
+        if private_channel is not None:
+            await private_channel.delete(f"{private_channel.member.mention}, Your private channel has been deleted.")
 
     @commands.Cog.listener()
     async def on_ready(self):
         guild = self.bot.guilds[0]
-        private_channels = guild.get_channel(config.VC_CATEGORY).channels
+        private_channel_records = await get_all_records()
 
-        for channel in private_channels:
-            channel_owner_id = await check_for_channel(channel_id=channel.id)
-            if channel_owner_id is not None:
-                channel_owner = guild.get_member(int(channel_owner_id[0]))
+        for channel_record in private_channel_records:
+            channel_owner = guild.get_member(int(channel_record[0]))
+            channel = guild.get_channel(int(channel_record[1]))
+            if channel is not None:
+                Private_Channel(channel_owner, channel)
                 await self.on_raw_member_update(channel_owner)
+            else:
+                await remove_channel_record(channel_record[1])
 
     @commands.Cog.listener()
     async def on_raw_member_update(self, member: discord.Member):
-        private_channel = await check_for_channel(member.id)
+        private_channel: Private_Channel = Private_Channel.find_channel(member=member)
         if private_channel is not None:
             is_allowed = await self.is_allowed_channel(member)
 
             if not is_allowed and len(member.roles) > 1:
-                print("Member no longer allowed to own channel. Channel deleted and record removed.")
-                await remove_channel(private_channel[1])
-                channel = member.guild.get_channel(int(private_channel[1]))
-                if channel is not None:
-                    await channel.delete()
-                    await member.send("You are no longer a server booster. Your private channel has been deleted.",
-                                      delete_after=300)
+                await private_channel.delete(
+                    f"{member.mention}, You are no longer a server booster. Your private channel has been deleted."
+                )
 
     async def is_allowed_channel(self, user: discord.Member) -> bool:
         for role in self.allowed_roles:
             is_allowed = user.get_role(role) is not None
             if is_allowed:
                 return True
-
         return False
 
     @commands.slash_command(description="Creates a private vc for you. Must be a server booster or council member.",
@@ -143,8 +141,8 @@ class Misc_Slash_Commands(commands.Cog):
         is_allowed = await self.is_allowed_channel(command_user)
 
         if is_allowed is True:
-            has_channel = await check_for_channel(command_user.id)
-            if has_channel is None:
+            private_channel: Private_Channel = Private_Channel.find_channel(member=command_user)
+            if private_channel is None:
                 name = name if name is not None else f"{command_user.name}'s VC"
                 new_vc = await command_user.guild.get_channel(category_id).create_voice_channel(name)
                 await new_vc.set_permissions(target=command_user,
@@ -152,17 +150,11 @@ class Misc_Slash_Commands(commands.Cog):
                                              manage_channels=True,
                                              manage_permissions=True,
                                              )
-                await add_user_channel(command_user.id, new_vc.id)
+                await Private_Channel.new(command_user, new_vc)
                 await inter.response.send_message("Channel created.", ephemeral=True, delete_after=2)
             else:
-                channel_exists: bool = command_user.guild.get_channel(int(has_channel[1])) is not None
-                if not channel_exists:
-                    await remove_channel(has_channel[1])
-                    await self.create_private_vc(interaction=inter, name=name)
-                    print("Removed non existent channel from database, created new one.")
-                else:
-                    await inter.response.send_message("You already have a channel silly.", ephemeral=True,
-                                                      delete_after=2)
+                await inter.response.send_message("You already have a channel silly.", ephemeral=True,
+                                                  delete_after=2)
         else:
             await inter.response.send_message("You are not a booster of the server. ;(", ephemeral=True, delete_after=2)
 
@@ -176,10 +168,10 @@ class Misc_Slash_Commands(commands.Cog):
                                          user: discord.Member = None,
                                          ):
         if action == "add" and user is not None and channel is not None:
-            await add_user_channel(user.id, channel.id)
+            await Private_Channel.new(user, channel)
             await inter.response.send_message("Record added.", ephemeral=True, delete_after=2)
         elif action == "remove" and channel is not None:
-            await remove_channel(channel.id)
+            await remove_channel_record(channel.id)
             await inter.response.send_message("Record deleted.", ephemeral=True, delete_after=2)
         else:
             await inter.response.send_message(
