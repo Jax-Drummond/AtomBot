@@ -3,7 +3,7 @@ import disnake as discord
 
 import config
 from utils.classes.private_channel import Private_Channel
-from utils.database_handler import get_all_records, remove_channel_record
+from utils.database_handler import DataBase_Handler
 
 
 class Private_Channels(commands.Cog):
@@ -22,7 +22,7 @@ class Private_Channels(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         guild = self.bot.guilds[0]
-        private_channel_records = await get_all_records()
+        private_channel_records = await DataBase_Handler.get_all_records()
 
         for channel_record in private_channel_records:
             channel_owner = guild.get_member(int(channel_record[0]))
@@ -31,7 +31,7 @@ class Private_Channels(commands.Cog):
                 Private_Channel(channel_owner, channel)
                 await self.on_raw_member_update(channel_owner)
             else:
-                await remove_channel_record(channel_record[1])
+                await DataBase_Handler.remove_channel_record(channel_record[1])
 
     @commands.Cog.listener()
     async def on_raw_member_update(self, member: discord.Member):
@@ -91,7 +91,7 @@ class Private_Channels(commands.Cog):
             await Private_Channel.new(user, channel)
             await inter.response.send_message("Record added.", ephemeral=True, delete_after=2)
         elif action == "remove" and channel is not None:
-            await remove_channel_record(channel.id)
+            await DataBase_Handler.remove_channel_record(channel.id)
             await inter.response.send_message("Record deleted.", ephemeral=True, delete_after=2)
         else:
             await inter.response.send_message(

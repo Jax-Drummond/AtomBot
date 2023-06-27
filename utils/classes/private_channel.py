@@ -1,6 +1,6 @@
 import disnake as discord
 
-from utils.database_handler import remove_channel_record, add_user_channel
+from utils.database_handler import DataBase_Handler
 
 
 class Private_Channel:
@@ -11,12 +11,15 @@ class Private_Channel:
         self.private_channels = Private_Channel.private_channels
         self.member = member
         self.channel = channel
-        print(f"Channel Name: {channel.name}, Owner: {member.name}")
+        print(self)
+
+    def __str__(self):
+        return f"\nChannel Name: \t{self.channel.name}\nOwner Name: \t{self.member.name}\n"
 
     # Creates a new record on the database and returns a Private_Channel object
     @classmethod
     async def new(cls, member: discord.Member, channel: discord.VoiceChannel):
-        await add_user_channel(member.id, channel.id)
+        await DataBase_Handler.add_user_channel(member.id, channel.id)
         return cls(member, channel)
 
     async def delete(self, reason: str = None):
@@ -28,7 +31,7 @@ class Private_Channel:
         except:
             print("Channel already deleted")
         await self.member.send(reason, delete_after=120)
-        await remove_channel_record(self.channel.id)
+        await DataBase_Handler.remove_channel_record(self.channel.id)
 
     @staticmethod
     def find_channel(member: discord.Member = None, channel: discord.VoiceChannel = None):

@@ -1,6 +1,7 @@
 import datetime
 
 import disnake as discord
+import requests
 from disnake.ext import commands
 
 from utils.bot_utils import load_cogs
@@ -20,6 +21,30 @@ class Misc_Slash_Commands(commands.Cog):
         choice = await one_in()
         coin = "Heads" if choice else "Tails"
         await inter.response.send_message(f"You got {coin}")
+
+    @commands.slash_command(description="Get a picture of the hill", name="chic-o-peek-cam")
+    async def chic_o_peek_cam(self, inter):
+        await inter.response.defer()
+        if 4 <= datetime.datetime.now().month < 9:
+            embed_colour = 0x2B5336
+
+        else:
+            embed_colour = 0x58A5D6
+
+        embed = discord.Embed(title="Chic-o-Peek Webcam", timestamp=datetime.datetime.now(),
+                              url="http://webcam.chicopeetubepark.com/webcam/camera.jpg",
+                              type="image",
+                              colour=embed_colour)
+        response = requests.get("http://webcam.chicopeetubepark.com/webcam/camera.jpg", stream=True)
+
+        if not response.ok:
+            print(response)
+
+        with open('images/camera.jpg', 'wb') as file:
+            file.write(response.content)
+
+        embed.set_image(file=discord.File('images/camera.jpg'))
+        await inter.followup.send(embed=embed)
 
     # Creates the /reload Command
     # Reloads the bots cogs
