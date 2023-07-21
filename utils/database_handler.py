@@ -38,9 +38,8 @@ class DataBase_Handler:
                 cursor.execute("CREATE TABLE private_channels (user_id CHAR(50) PRIMARY KEY,channel_id CHAR(50))")
                 print("Database created.")
                 return cursor
-            else:
-                DataBase_Handler.is_disabled = True
-                print(f"{error}. The database aspect of the bot will be disabled.")
+            DataBase_Handler.is_disabled = True
+            print(f"{error}. The database aspect of the bot will be disabled.")
 
     @staticmethod
     async def get_all_records():
