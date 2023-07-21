@@ -10,8 +10,11 @@ A python discord bot
 4. There is no need to touch DEV_TOKEN unless you know what you're doing
 5. Keep Environment as 'PROD' unless using DEV_TOKEN then use 'DEV'
 6. Run `pip install -r requirements.txt`
-7. Run bot.py
-8. Profit
+7. Download MySQL
+8. Change config.py DB username and password to your MySQL password
+9. Create a schema called `atombot`
+10. Run bot.py
+11. Profit
 
 ## Optional Config
 
