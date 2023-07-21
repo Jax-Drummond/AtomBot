@@ -2,7 +2,7 @@ import os
 
 
 # Gets all python files in the cogs directory and loads them as extensions
-def load_cogs(bot, reload: bool | None = False):
+def load_cogs(bot, reload: bool = False):
     cog_dir = "cogs"
 
     for obj in os.walk("cogs"):

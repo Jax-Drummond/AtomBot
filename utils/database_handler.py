@@ -3,6 +3,7 @@ import pymysql.cursors
 
 
 class DataBase_Handler:
+    is_disabled = False
 
     @staticmethod
     async def connect():
@@ -21,8 +22,9 @@ class DataBase_Handler:
 
             return cursor
         except pymysql.Error as error:
-            print(f"Error connecting to database: {error}")
+            print(f"Error connecting to database: {error}.")
             if "Unknown database" in str(error):
+                print("Creating database.")
                 connection = pymysql.connect(
                     user=config.DB_USERNAME,
                     password=config.DB_PASSWORD,
@@ -36,6 +38,9 @@ class DataBase_Handler:
                 cursor.execute("CREATE TABLE private_channels (user_id CHAR(50) PRIMARY KEY,channel_id CHAR(50))")
                 print("Database created.")
                 return cursor
+            else:
+                DataBase_Handler.is_disabled = True
+                print(f"{error}. The database aspect of the bot will be disabled.")
 
     @staticmethod
     async def get_all_records():
@@ -50,16 +55,18 @@ class DataBase_Handler:
 
     @staticmethod
     async def remove_channel_record(channel_id):
-        cursor = await DataBase_Handler.connect()
-        cursor.execute(f"DELETE FROM private_channels WHERE channel_id={channel_id}")
-        cursor.close()
+        if not DataBase_Handler.is_disabled:
+            cursor = await DataBase_Handler.connect()
+            cursor.execute(f"DELETE FROM private_channels WHERE channel_id={channel_id}")
+            cursor.close()
 
     @staticmethod
     async def add_user_channel(user_id, channel_id):
-        cursor = await DataBase_Handler.connect()
-        try:
-            cursor.execute(
-                f"INSERT INTO private_channels (user_id,channel_id) VALUES ({str(user_id)}, {str(channel_id)})")
-        except pymysql.Error as error:
-            print(error)
-        cursor.close()
+        if not DataBase_Handler.is_disabled:
+            cursor = await DataBase_Handler.connect()
+            try:
+                cursor.execute(
+                    f"INSERT INTO private_channels (user_id,channel_id) VALUES ({str(user_id)}, {str(channel_id)})")
+            except pymysql.Error as error:
+                print(error)
+            cursor.close()
