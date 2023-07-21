@@ -39,7 +39,7 @@ class DataBase_Handler:
                 print("Database created.")
                 return cursor
             DataBase_Handler.is_disabled = True
-            print(f"{error}. The database aspect of the bot will be disabled.")
+            print(f"The database aspect of the bot will be disabled.")
 
     @staticmethod
     async def get_all_records():
