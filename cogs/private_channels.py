@@ -22,9 +22,9 @@ class Private_Channels(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         guild = self.bot.guilds[0]
-        if not DataBase_Handler.is_disabled:
-            private_channel_records = await DataBase_Handler.get_all_records()
+        private_channel_records = await DataBase_Handler.get_all_records()
 
+        if private_channel_records is not None:
             for channel_record in private_channel_records:
                 channel_owner = guild.get_member(int(channel_record[0]))
                 channel = guild.get_channel(int(channel_record[1]))
