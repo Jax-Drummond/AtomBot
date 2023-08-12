@@ -28,7 +28,7 @@ async def get_image():
     try:
         website = await generate_url()
 
-        scraper = cloudscraper.create_scraper(delay=1, browser='chrome')
+        scraper = cloudscraper.create_scraper(browser='chrome')
         scrape = scraper.get(website)
 
         soup = beauty(scrape.text, "html.parser")
@@ -38,15 +38,15 @@ async def get_image():
         img_url = re.search(regx, str(soup)).group("url")
         scrape = scraper.get(img_url)
 
-        soup = beauty(scrape.text, "html.parser")
-        if soup.text.__contains__('404 Not Found') or img_url.__contains__('imgur'):
+        if scrape.headers.get("Content-Type") == 'text/html' or scrape.headers.get("Content-Length") == '503':
             return await get_image()
 
+        soup = beauty(scrape.text, "html.parser")
         filename = img_url.split('/')[-1]
         path = f"images/{filename}"
         with open(path, 'wb') as f:
             f.write(scrape.content)
-        return path
+        return path, img_url
 
     except AssertionError:
         return await get_image()
