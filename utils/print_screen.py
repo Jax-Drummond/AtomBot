@@ -8,25 +8,25 @@ import cloudscraper
 from bs4 import BeautifulSoup as beauty
 
 
-async def generate_letters(x):
+def generate_letters(x):
     return ''.join(random.choice(string.ascii_lowercase) for y in range(x))
 
 
-async def generate_numbers(x):
+def generate_numbers(x):
     return ''.join(str(random.randrange(0, 9)) for y in range(x))
 
 
-async def generate_url():
+def generate_url():
     url = "https://prnt.sc/"
-    random__letters = await generate_letters(2)
-    random__numbers = await generate_numbers(4)
+    random__letters = generate_letters(2)
+    random__numbers = generate_numbers(4)
     url += random__letters + random__numbers
     return url
 
 
-async def get_image():
+def get_image():
     try:
-        website = await generate_url()
+        website = generate_url()
 
         scraper = cloudscraper.create_scraper(browser='chrome')
         scrape = scraper.get(website)
@@ -39,7 +39,7 @@ async def get_image():
         scrape = scraper.get(img_url)
 
         if scrape.headers.get("Content-Type") == 'text/html' or scrape.headers.get("Content-Length") == '503':
-            return await get_image()
+            return get_image()
 
         soup = beauty(scrape.text, "html.parser")
         filename = img_url.split('/')[-1]
@@ -49,9 +49,9 @@ async def get_image():
         return path, img_url
 
     except AssertionError:
-        return await get_image()
+        return get_image()
     except AttributeError:
-        return await get_image()
+        return get_image()
 
 
 async def delete_photos():

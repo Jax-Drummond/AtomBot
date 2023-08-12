@@ -76,7 +76,7 @@ class Misc_Slash_Commands(commands.Cog):
             embed = discord.Embed(title="Print-screen Image", color=discord.Color.blue(),
                                   timestamp=datetime.datetime.now())
             # Gets image from prnt.sc
-            image, url = await get_image()
+            image, url = get_image()
             # Set the image of the embed to the one we got from prnt.sc
             embed.set_image(file=discord.File(image))
             embed.url = url
