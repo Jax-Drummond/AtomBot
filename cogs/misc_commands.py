@@ -75,6 +75,7 @@ class Misc_Slash_Commands(commands.Cog):
             # Builds the Embed
             embed = discord.Embed(title="Print-screen Image", color=discord.Color.blue(),
                                   timestamp=datetime.datetime.now())
+            embed.set_footer(text=f"@{inter.user.name}")
             # Gets image from prnt.sc
             image, url = get_image()
             # Set the image of the embed to the one we got from prnt.sc
