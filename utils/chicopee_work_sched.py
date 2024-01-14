@@ -81,6 +81,7 @@ def work_embed(url: str, name: str):
                         time = data2[data2.index(name, day) - i]
                         time_index = (data2.index(name, day) - i) + 1
                         split_time = time.split(" - ")
+                        split_time = split_time if len(split_time) == 1 else time.split("-")
                         start_time = datetime.strptime(split_time[0], "%H:%M")
                         end_time = datetime.strptime(split_time[1], "%H:%M")
                         if end_time < start_time:
