@@ -1,4 +1,5 @@
 import requests
+from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 import disnake as discord
 
@@ -35,6 +36,7 @@ def work_embed(url: str, name: str):
         data.append(row_data)
 
     counter = 0
+    total_hours = 0
     data2 = []
 
     for text in data[4]:
@@ -78,6 +80,14 @@ def work_embed(url: str, name: str):
                         workers = []
                         time = data2[data2.index(name, day) - i]
                         time_index = (data2.index(name, day) - i) + 1
+                        split_time = time.split(" - ")
+                        start_time = datetime.strptime(split_time[0], "%H:%M")
+                        end_time = datetime.strptime(split_time[1], "%H:%M")
+                        if end_time < start_time:
+                            end_time += timedelta(hours=12)
+                        dif = end_time - start_time
+                        shift_hours = dif.total_seconds() / (60 * 60)
+                        total_hours += shift_hours
 
                         for n in range(0, len(data2) - time_index):
                             current_item = data2[time_index + n]
@@ -93,11 +103,11 @@ def work_embed(url: str, name: str):
 
                             workers.append(current_item.capitalize())
 
-                        embed.add_field(name=f"{current_day} - {day_shift_time}\n{time}",
+                        embed.add_field(name=f"{current_day} - {day_shift_time}\n{time}\n{shift_hours} hrs",
                                         value='\n'.join(workers),
                                         inline=False)
                         break
         except ValueError:
             embed.add_field(name=f"{current_day} - {day_shift_time}\nNo Work", value="", inline=False)
-
+    embed.add_field(name=f"Total Hours\n{total_hours}", value="", inline=False)
     return embed
