@@ -22,7 +22,10 @@ class Misc_Slash_Commands(commands.Cog):
         coin = "Heads" if choice else "Tails"
         await inter.response.send_message(f"You got {coin}")
 
-    @commands.slash_command(description="Get a picture of the hill", name="chic-o-peek-cam")
+    @commands.slash_command(description="Get a picture of the hill",
+                            name="chic-o-peek-cam",
+                            install_types=discord.ApplicationInstallTypes.all(),
+                            contexts=discord.InteractionContextTypes.all(), )
     async def chic_o_peek_cam(self, inter):
         await inter.response.defer()
         if 4 <= datetime.datetime.now().month < 9:
@@ -68,7 +71,9 @@ class Misc_Slash_Commands(commands.Cog):
 
     # Creates the /prntsc Command
     # Gets a random image from https://prnt.sc
-    @commands.slash_command(description="Scrapes a random image from Prnt.sc")
+    @commands.slash_command(description="Scrapes a random image from Prnt.sc",
+                            install_types=discord.ApplicationInstallTypes.all(),
+                            contexts=discord.InteractionContextTypes.all(), )
     async def prntsc(self, inter: discord.ApplicationCommandInteraction):
         try:
             await inter.response.defer(with_message=True)
@@ -91,11 +96,13 @@ class Misc_Slash_Commands(commands.Cog):
 
     # Creates the /work_sched Command
     # Displays the work schedule(For Chicopee employees only)
-    @commands.slash_command(description="Displays your work schedule (For Chicopee employees only)")
+    @commands.slash_command(description="Displays your work schedule (For Chicopee employees only)",
+                            install_types=discord.ApplicationInstallTypes.all(),
+                            contexts=discord.InteractionContextTypes.all(), )
     async def work_sched(self, inter: discord.ApplicationCommandInteraction, url: str, name: str):
         embed = work_embed(url, name)
-        await inter.response.send_message("Schedule sent", ephemeral=True, delete_after=3)
-        await inter.user.send(embed=embed, components=[
+        await inter.response.defer(with_message=True)
+        await inter.followup.send(embed=embed, components=[
             discord.ui.Button(label="Refresh", style=discord.ButtonStyle.gray, custom_id=f"{name}")
         ])
 

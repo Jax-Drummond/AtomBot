@@ -11,7 +11,9 @@ class Bot_Settings_Commands(commands.Cog):
     @commands.slash_command(
         name="set-bot-activity",
         description="Changes the bots discord activity.",
-        auto_sync=True
+        auto_sync=True,
+        install_types=discord.ApplicationInstallTypes.all(),
+        contexts=discord.InteractionContextTypes.all(),
     )
     @commands.default_member_permissions()
     async def set_bot_activity(

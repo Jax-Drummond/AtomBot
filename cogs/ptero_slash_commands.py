@@ -67,7 +67,7 @@ class Ptero_Slash_Commands(commands.Cog):
     # Creates the /ptero-server status command
     # Gets the status of the server on pterodactyl
     @ptero_server.sub_command(description="Get the status of a server", name="status", auto_sync=True)
-    async def get_server_status(self, inter, server: str = commands.Param(choices=servers.keys())):
+    async def get_server_status(self, inter, server: str = commands.Param(choices=list(servers.keys()))):
         await inter.response.send_message(
             f"The current status of {server} is {await get_server_status(servers[server])}")
 
@@ -76,7 +76,7 @@ class Ptero_Slash_Commands(commands.Cog):
     @ptero_server_admin.sub_command(description="Sends server power command", name="signal", auto_sync=True)
     async def control_server_power(self, inter: discord.ApplicationCommandInteraction,
                                    signal: str = commands.Param(choices=["start", "stop", "restart", "kill"]),
-                                   server: str = commands.Param(choices=servers.keys())):
+                                   server: str = commands.Param(choices=list(servers.keys()))):
         await change_power_state(servers[server], signal)
         await inter.response.defer()
 
