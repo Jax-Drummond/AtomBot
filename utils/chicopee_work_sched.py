@@ -7,6 +7,10 @@ import disnake as discord
 def work_embed(url: str, name: str):
     name = name.lower()
     # Send a request to the URL and retrieve the HTML content
+
+    if url.find("/pubhtml?"):
+        url = url.split("?")[0] + "/sheet?" + url.split("?")[1]
+
     response = requests.get(url)
     html = response.text
 
@@ -18,6 +22,8 @@ def work_embed(url: str, name: str):
 
     # Create a list to store the data
     data = []
+
+    print(rows)
 
     # Iterate through the rows
     for row in rows:
@@ -38,6 +44,7 @@ def work_embed(url: str, name: str):
     counter = 0
     total_hours = 0
     data2 = []
+
 
     for text in data[4]:
         if text == "Start":
