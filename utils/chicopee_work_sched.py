@@ -7,8 +7,7 @@ import disnake as discord
 def work_embed(url: str, name: str):
     name = name.lower()
     # Send a request to the URL and retrieve the HTML content
-
-    if url.find("/pubhtml?"):
+    if url.find("/pubhtml?") != -1:
         url = url.split("?")[0] + "/sheet?" + url.split("?")[1]
 
     response = requests.get(url)
